@@ -24,7 +24,6 @@ const GoodsList = () => {
     name: "",
     description: "",
     category: cat,
-    image: null,
     price: null
   })
   
@@ -37,19 +36,21 @@ const GoodsList = () => {
         <input type="text"
           onChange={(event) => {setGoodToAdd({...goodToAdd, name: event.target.value})}}/>
         <label>Описание товара:</label>
-        <textarea name="desc" id="desc" 
+        <textarea name="desc" id="desc"
           onChange={(event) => {setGoodToAdd({...goodToAdd, description: event.target.value})}}></textarea>
         <label>Категория товара:</label>
         <select value={goodToAdd.category} onChange={(event) => {setGoodToAdd({...goodToAdd, category: event.target.value})}}
           name="cats" id="cats" placeholder='Категория'>
-          {cats.map((opt, index) => 
+          {cats.map((opt, index) =>
             <option key={index} value={opt}>{opt}</option>
           )}
         </select>
         <label>Цена:</label>
         <input type="number" onChange={(event) => {setGoodToAdd({...goodToAdd, price: Number(event.target.value)})}}/>
         
-        <button onClick={() => {dispatch(fetchAddGoods(goodToAdd))}}>Добавить</button>
+        <button onClick={() => {
+          dispatch(fetchAddGoods(goodToAdd))
+        }}>Добавить</button>
       </div>
       <div className={classes.list}>
         <h1>{cat}</h1>

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.shop.footballShop.dto.NewProductDTO;
 import ru.shop.footballShop.dto.ProductDTO;
+import ru.shop.footballShop.entites.Product;
 import ru.shop.footballShop.errors.ProductNotFoundException;
 import ru.shop.footballShop.mappers.ProductMapper;
 import ru.shop.footballShop.services.ProductImageService;
@@ -31,8 +32,9 @@ public class AdminController {
     }
 
     @PostMapping("/products/add")
-    public void addProduct(@RequestBody NewProductDTO newProductDTO) {
+    public Product addProduct(@RequestBody NewProductDTO newProductDTO) {
         productService.save(productMapper.convertNewProductDTOToProduct(newProductDTO));
+        return productService.findAll().get(productService.findAll().size()-1);
     }
 
     /**

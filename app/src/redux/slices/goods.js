@@ -30,15 +30,13 @@ export const fetchAddGoods = createAsyncThunk('fetchAddGoods',
                 }
             }
         )
-        return {
-            ...good,
-            images: []
-        }
+        return data
     }
 )
 
 export const fetchDelGoods = createAsyncThunk('fetchDelGoods',
     async (good) => {
+        console.log(good)
         const {data} = await axios.post(`http://localhost:8080/admin/products/del/${good.id}`, good,
             {
                 headers: {
@@ -58,10 +56,12 @@ const goodsSlice = createSlice({
         //Отправка запроса на получение товаров
         [fetchGoods.fulfilled]: (state, action) => {
             state.goods = action.payload
+            console.log(state.goods)
         },
         //Отправка запроса на добавление товаров
         [fetchAddGoods.fulfilled]: (state, action) => {
             state.goods = [...state.goods, action.payload]
+            console.log(state.goods)
         },
         //Отправка запроса на удаление товара
         [fetchDelGoods.fulfilled]: (state, action) => {

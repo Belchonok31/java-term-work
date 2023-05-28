@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Cookies from 'universal-cookie'
-import { fetchDelGoods } from '../../redux/slices/goods'
+import { fetchDelGoods, fetchGoods } from '../../redux/slices/goods'
 import axios from 'axios'
 import classes from './GoodCard.module.css'
 
@@ -40,40 +40,42 @@ const GoodCard = ({item, index}) => {
 
     const cookies = new Cookies()
 
-    const attachImage = async (selectedImage, id) => {
+    const attachImage = async (selectedImage) => {
+        console.log(item)
         const fd = new FormData()
         fd.append("file", selectedImage)
-        await axios.post(`http://localhost:8080/admin/load_image/${id}`, fd,{
+        await axios.post(`http://localhost:8080/admin/load_image/${item.id}`, fd, {
         headers: {
             'Content-Type': 'multipart/form-data',
             "Authorization": "Bearer " + cookies.get("token")
         }
         })
+        dispatch(fetchGoods())
     }
 
     const [img, setImg] = useState(null)
 
     useEffect(() => {
         const fetchImage = async () => {
-          try {
-            const response = await fetch(`http://localhost:8080/image/${item.images[0].url.split('/')[2]}`, 
-                {
-                headers: {
-                Authorization: "Bearer " + cookies.get("token")
+            try {
+                const response = await fetch(`http://localhost:8080/image/${item.images[0].url.split('/')[2]}`,
+                    {
+                    headers: {
+                        Authorization: "Bearer " + cookies.get("token")
+                    }
+                });
+                if (response.ok) {
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                setImg(objectUrl);
+                } else {
+                console.log('Ошибка при получении файла', response);
                 }
-            });
-            if (response.ok) {
-              const blob = await response.blob();
-              const objectUrl = URL.createObjectURL(blob);
-              setImg(objectUrl);
-            } else {
-              console.log('Ошибка при получении файла', response);
+            } catch (error) {
+                console.log('Ошибка при выполнении запроса:', error);
             }
-          } catch (error) {
-            console.log('Ошибка при выполнении запроса:', error);
-          }
         };
-    
+        console.log(item.images)
         fetchImage();
       }, [item.images])
 
@@ -86,7 +88,7 @@ const GoodCard = ({item, index}) => {
         <p>Описание: {item.description}</p>
         <p>Цена: {item.price}</p>
         <label>Картинка:</label>
-        <input type="file" accept="image/*" onChange={(event) => {attachImage(event.target.files[0], item.id)}}/>
+        <input type="file" accept="image/*" onChange={(event) => {attachImage(event.target.files[0])}}/>
         <button onClick={() => {add_to_cart(item)}}>В корзину</button>
         <button onClick={() => {dispatch(fetchDelGoods(item))}}>Удалить</button>
     </div>

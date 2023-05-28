@@ -26,7 +26,8 @@ public class Product {
 
     int price;
 
-    @OneToMany(mappedBy = "product")
+
+    @OneToMany(mappedBy = "product", cascade=CascadeType.ALL)
     List<ProductImage> images;
 
     @ManyToMany
